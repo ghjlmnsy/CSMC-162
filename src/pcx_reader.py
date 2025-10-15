@@ -198,22 +198,29 @@ class PCXReader:
             return img
         
         elif num_planes == 1 and bits_per_pixel == 8:
-            # 8-bit indexed color
-            img = Image.new('P', (width, height))
-            
-            # Set palette if available
+            # 8-bit: either indexed color (with palette) or grayscale (without palette)
             if self.palette:
+                # 8-bit indexed color
+                img = Image.new('P', (width, height))
                 palette_flat = []
                 for r, g, b in self.palette:
                     palette_flat.extend([r, g, b])
                 img.putpalette(palette_flat)
-            
-            # Set pixel data
-            pixels = []
-            for scanline in scanlines:
-                pixels.extend(scanline[0][:width])
-            img.putdata(pixels)
-            return img.convert('RGB')
+                
+                # Set pixel data
+                pixels = []
+                for scanline in scanlines:
+                    pixels.extend(scanline[0][:width])
+                img.putdata(pixels)
+                return img.convert('RGB')
+            else:
+                # 8-bit grayscale
+                img = Image.new('L', (width, height))
+                pixels = []
+                for scanline in scanlines:
+                    pixels.extend(scanline[0][:width])
+                img.putdata(pixels)
+                return img.convert('RGB')
         
         else:
             # Try to handle other formats using PIL's built-in PCX support

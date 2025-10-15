@@ -20,7 +20,7 @@ class PCXInfoWindow:
         """
         self.window = tk.Toplevel(parent)
         self.window.title("PCX File Information")
-        self.window.geometry("550x650")
+        self.window.geometry("600x800")
         self.window.configure(bg="#2b2b2b")
         
         self.pcx_reader = pcx_reader
@@ -58,29 +58,33 @@ class PCXInfoWindow:
         
         # --- Original Image Section ---
         self._add_section_title(scrollable_frame, "Original Image")
-        self._add_image(scrollable_frame, self.pcx_reader.image, max_size=(500, 300))
+        self._add_image(scrollable_frame, self.pcx_reader.image, max_size=(550, 400))
         
         # --- PCX Header Information Section ---
         self._add_section_title(scrollable_frame, "PCX Header Information")
         self._add_header_info(scrollable_frame)
         
         # --- Color Palette Section ---
-        self._add_section_title(scrollable_frame, "Color Palette")
         if self.pcx_reader.palette:
+            self._add_section_title(scrollable_frame, "Color Palette")
             palette_img = self.pcx_reader.get_palette_image(cell_size=12)
             if palette_img:
                 self._add_image(scrollable_frame, palette_img, max_size=(192, 192))
         else:
-            # Note for 24-bit RGB images
-            note_label = tk.Label(
-                scrollable_frame,
-                text="No indexed palette (24-bit RGB image uses direct color values)",
-                bg="#2b2b2b",
-                fg="#888888",
-                font=("Arial", 9, "italic"),
-                pady=10
-            )
-            note_label.pack(padx=10)
+            # Note for images without palette (grayscale)
+            if self.header.bits_per_pixel == 8 and self.header.num_planes == 1:
+                self._add_section_title(scrollable_frame, "Image Type")
+                note_frame = tk.Frame(scrollable_frame, bg="#1a1a1a", relief=tk.SUNKEN, bd=2)
+                note_frame.pack(fill=tk.X, padx=5, pady=10)
+                note_label = tk.Label(
+                    note_frame,
+                    text="This is a grayscale image (no color palette)",
+                    bg="#1a1a1a",
+                    fg="#aaaaaa",
+                    font=("Arial", 10),
+                    pady=10
+                )
+                note_label.pack(padx=10)
     
     def _add_section_title(self, parent, title):
         """Add a section title."""
