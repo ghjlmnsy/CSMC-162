@@ -65,13 +65,14 @@ class PCXInfoWindow:
         self._add_header_info(scrollable_frame)
         
         # --- Color Palette Section ---
+        self._add_section_title(scrollable_frame, "Color Palette")
         if self.pcx_reader.palette:
-            self._add_section_title(scrollable_frame, "Color Palette")
+            # Show the palette converted to grayscale (for 8-bit single-plane images)
             palette_img = self.pcx_reader.get_palette_image(cell_size=12)
             if palette_img:
                 self._add_image(scrollable_frame, palette_img, max_size=(192, 192))
         else:
-            # Note for images without palette (grayscale)
+            # Note for images without a palette block
             if self.header.bits_per_pixel == 8 and self.header.num_planes == 1:
                 self._add_section_title(scrollable_frame, "Image Type")
                 note_frame = tk.Frame(scrollable_frame, bg="#1a1a1a", relief=tk.SUNKEN, bd=2)
