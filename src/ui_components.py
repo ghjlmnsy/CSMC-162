@@ -11,15 +11,18 @@ class ToolTip:
         self.widget = widget
         self.text_func = text_func
         self.tip_window = None
+        # bind enter/leave so the tooltip appears on hover
         widget.bind("<Enter>", self.show)
         widget.bind("<Leave>", self.hide)
 
     def show(self, event=None):
+        # do nothing if already visible
         if self.tip_window:
             return
         text = self.text_func()
         if not text:
             return
+        # position tooltip near the widget
         x = self.widget.winfo_rootx() + 20
         y = self.widget.winfo_rooty() + 20
         self.tip_window = tw = tk.Toplevel(self.widget)

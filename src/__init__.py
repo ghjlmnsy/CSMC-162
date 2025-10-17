@@ -7,6 +7,7 @@ Modular image viewer/editor with PCX file format support.
 __version__ = "2.0.0"
 __authors__ = "Salcedo, Chris Samuel (2022-05055) & Suyman, Ann Junah (2022-09089)"
 
+# Re-export important symbols for easier imports elsewhere
 from .main_app import ImageViewerApp
 from .utils import ImageHistory, ColorUtils
 from .image_tools import ImageTools
