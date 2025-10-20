@@ -11,6 +11,7 @@ from .image_tools import ImageTools
 from .ui_components import ToolTip
 from .pcx_reader import PCXReader
 from .pcx_info_window import PCXInfoWindow
+from .channel_histogram_window import ChannelHistogramWindow
 
 
 class ImageViewerApp:
@@ -101,6 +102,8 @@ class ImageViewerApp:
         transform.add_command(label="Flip Horizontal", command=lambda: self.transform("flip_h"))
         transform.add_command(label="Flip Vertical", command=lambda: self.transform("flip_v"))
         imagemenu.add_cascade(label="Transform", menu=transform)
+        imagemenu.add_separator()
+        imagemenu.add_command(label="RGB Channels & Histograms", command=self.show_channels_histograms)
         menubar.add_cascade(label="Image", menu=imagemenu)
         # View
         viewmenu = tk.Menu(menubar, tearoff=0)
@@ -367,6 +370,17 @@ class ImageViewerApp:
             # Show basic file info for non-PCX files
             w, h = self.original_image.size
             messagebox.showinfo("File Info", f"Size: {w} x {h} pixels")
+
+    def show_channels_histograms(self):
+        """Display RGB channels and histograms window."""
+        if not self.original_image:
+            messagebox.showinfo("Channels & Histograms", "No image loaded.")
+            return
+        
+        try:
+            ChannelHistogramWindow(self.root, self.original_image)
+        except Exception as e:
+            messagebox.showerror("Channels & Histograms Error", f"Could not display channels and histograms:\n{e}")
 
     # ---------- edits ----------
     def apply_and_push(self, fn):
